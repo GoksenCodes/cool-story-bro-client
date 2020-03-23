@@ -14,7 +14,7 @@ export default function Homepage(props) {
       <h1>{props.title}</h1>
       <p>{props.description}</p>
       {props.showLink ? (
-        <Link to={`/homepages/${props.id}`}>
+        <Link to={`/${props.id}`}>
           <Button>Visit page</Button>
         </Link>
       ) : null}
