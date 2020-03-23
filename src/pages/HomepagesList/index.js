@@ -9,6 +9,7 @@ import Homepage from "../../components/Homepage";
 export default function HomepagesList() {
   const dispatch = useDispatch();
   const homepages = useSelector(selectHomepages);
+  console.log(homepages);
 
   useEffect(() => {
     dispatch(getHomepagesThunk());

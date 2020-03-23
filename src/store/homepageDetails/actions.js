@@ -13,6 +13,6 @@ export function getHomepageById(id) {
       payload: response.data
     });
 
-    console.log(response.data);
+    // console.log(response.data);
   };
 }

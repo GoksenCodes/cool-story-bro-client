@@ -1,1 +1,4 @@
-export const selectHomepageDetails = reduxState => reduxState.homepageDetails;
+export const selectHomepageDetails = reduxState => {
+  console.log(reduxState);
+  return reduxState.homepageDetails;
+};

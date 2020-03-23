@@ -1,9 +1,13 @@
-const initialState = {};
+import { FETCH_HOMEPAGE_DETAILS_SUCCESS } from "./actions";
+const initialState = {
+  stories: []
+};
 
-export default (state = initialState, action) => {
-  switch (action.type) {
-    case "FETCH_HOMEPAGE_DETAILS_SUCCESS":
-      return action.payload; //returns directly the selected homepage, no need for ... it would cause duplication
+export default (state = initialState, { type, payload }) => {
+  switch (type) {
+    case FETCH_HOMEPAGE_DETAILS_SUCCESS:
+      console.log({ ...state, ...payload });
+      return { ...state, ...payload };
 
     default:
       return state;
