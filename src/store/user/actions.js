@@ -7,10 +7,13 @@ import {
   showMessageWithTimeout,
   setMessage
 } from "../appState/actions";
+import { selectUser } from "./selectors";
 
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const TOKEN_STILL_VALID = "TOKEN_STILL_VALID";
+export const HOMEPAGE_UPDATED = "HOMEPAGE_UPDATED";
 export const LOG_OUT = "LOG_OUT";
+export const STORY_POST_SUCCESS = "STORY_POST_SUCCESS";
 
 const loginSuccess = userWithToken => {
   return {
@@ -25,6 +28,16 @@ const tokenStillValid = userWithoutToken => ({
 });
 
 export const logOut = () => ({ type: LOG_OUT });
+
+export const homepageUpdated = homepage => ({
+  type: HOMEPAGE_UPDATED,
+  payload: homepage
+});
+
+export const storyPostSuccess = story => ({
+  type: STORY_POST_SUCCESS,
+  payload: story
+});
 
 export const signUp = (name, email, password) => {
   return async (dispatch, getState) => {
@@ -105,6 +118,70 @@ export const getUserWithStoredToken = () => {
       // if we get a 4xx or 5xx response,
       // get rid of the token by logging out
       dispatch(logOut());
+      dispatch(appDoneLoading());
+    }
+  };
+};
+
+//updateMyPage
+
+export const updateMyPage = (title, description, backgroundcolor, color) => {
+  return async (dispatch, getState) => {
+    const { homepage, token } = selectUser(getState());
+    dispatch(appLoading());
+
+    const response = await axios.put(
+      `${apiUrl}/homepages/${homepage.id}`, // /homepages/id because in the router it is under homepages route
+      {
+        title,
+        description,
+        backgroundcolor,
+        color
+      },
+      {
+        // we need to this part every route that requires auth
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    // console.log(response);
+
+    dispatch(
+      showMessageWithTimeout("success", false, "update successfull", 3000)
+    );
+    dispatch(homepageUpdated(response.data.homepage)); //desired data from api goes as an argument to the dispacthed action
+    dispatch(appDoneLoading());
+  };
+};
+
+export const postStory = (name, content, imageurl) => {
+  return async (dispatch, getState) => {
+    const { homepage, token } = selectUser(getState());
+    // console.log(name, content, imageUrl);
+    dispatch(appLoading());
+    try {
+      const response = await axios.post(
+        `${apiUrl}/homepages/${homepage.id}/stories`,
+        {
+          name,
+          content,
+          imageurl
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      dispatch(
+        showMessageWithTimeout("success", false, response.data.message, 3000)
+      );
+      dispatch(storyPostSuccess(response.data));
+      dispatch(appDoneLoading());
+    } catch (e) {
+      console.log("danger", e.response.data);
+      dispatch(showMessageWithTimeout("danger", false, e.response.data, 3000));
       dispatch(appDoneLoading());
     }
   };

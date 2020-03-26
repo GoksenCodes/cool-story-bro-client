@@ -6,6 +6,7 @@ const initialState = {
 export default (state = initialState, { type, payload }) => {
   switch (type) {
     case FETCH_HOMEPAGE_DETAILS_SUCCESS:
+      console.log("INITIAL-------", payload);
       console.log({ ...state, ...payload });
       return { ...state, ...payload };
 

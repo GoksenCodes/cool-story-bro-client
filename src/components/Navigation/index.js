@@ -22,7 +22,8 @@ export default function Navigation() {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav style={{ width: "100%" }} fill>
           <NavbarItem path="/" linkText="Home" />
-          <NavbarItem path="/other" linkText="Other" />
+          {/* we check here if the user logged in by checking token, so we show mypage only the ones with token */}
+          {token ? <NavbarItem path="/mypage" linkText="Mypage" /> : null}
           {loginLogoutControls}
         </Nav>
       </Navbar.Collapse>

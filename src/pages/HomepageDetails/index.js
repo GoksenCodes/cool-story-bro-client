@@ -19,6 +19,7 @@ export default function HomepageDetails() {
   useEffect(() => {
     dispatch(getHomepageById(id));
   }, [dispatch, id]);
+  //api call is done inside this action, it is in useeffect becuase we need it to be called each time page renders
 
   return (
     <div>
