@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 import Carousel from "react-bootstrap/Carousel";
+import Button from "react-bootstrap/Button";
+import { useDispatch } from "react-redux";
+import { deleteStory } from "../../store/user/actions";
 
 export default function Stories(props) {
   console.log(props);
+  const dispatch = useDispatch();
   const [count, setCount] = useState(0);
+  const onDelete = id => {
+    console.log("delete story", id);
+    dispatch(deleteStory(id));
+  };
+
   return (
     //since stories under homepage we need to get it via props the map it as story. ..
     // if there was only one we wouldn;t need component and map it as homepage.stories in homepagedetails page
@@ -32,6 +41,11 @@ export default function Stories(props) {
                 <p>{story.content}</p>
                 <p>This story is liked {count} times</p>
                 <button onClick={() => setCount(count + 1)}>Like</button>
+                <div>
+                  <Button variant="warning" onClick={() => onDelete(story.id)}>
+                    Delete story
+                  </Button>
+                </div>
               </Carousel.Caption>
             </Carousel.Item>
           );

@@ -3,7 +3,8 @@ import {
   LOGIN_SUCCESS,
   TOKEN_STILL_VALID,
   STORY_POST_SUCCESS,
-  HOMEPAGE_UPDATED
+  HOMEPAGE_UPDATED,
+  STORY_DELETE_SUCCESS
 } from "./actions";
 
 const initialState = {
@@ -41,9 +42,22 @@ export default (state = initialState, action) => {
       // The goal is to combine current state with whatever data that action changes.
       return {
         ...state, //we create a new object with the keys of the current state
-        // ,homepage by this we redine the homepage key
+        // ,homepage by this we redefine the homepage key
         // homepage: {...action.payload, stories: state.homepage.stories }
         homepage: { ...state.homepage, ...action.payload }
+      };
+
+    case STORY_DELETE_SUCCESS:
+      const storyId = action.payload;
+      const newStories = state.homepage.stories.filter(
+        story => story.id !== storyId
+      );
+      return {
+        ...state,
+        homepage: {
+          ...state.homepage,
+          stories: newStories
+        }
       };
 
     default:

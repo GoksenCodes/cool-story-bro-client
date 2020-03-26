@@ -14,6 +14,7 @@ export const TOKEN_STILL_VALID = "TOKEN_STILL_VALID";
 export const HOMEPAGE_UPDATED = "HOMEPAGE_UPDATED";
 export const LOG_OUT = "LOG_OUT";
 export const STORY_POST_SUCCESS = "STORY_POST_SUCCESS";
+export const STORY_DELETE_SUCCESS = "STORY_DELETE_SUCCESS";
 
 const loginSuccess = userWithToken => {
   return {
@@ -37,6 +38,11 @@ export const homepageUpdated = homepage => ({
 export const storyPostSuccess = story => ({
   type: STORY_POST_SUCCESS,
   payload: story
+});
+
+export const storyDeleteSuccess = storyId => ({
+  type: STORY_DELETE_SUCCESS,
+  payload: storyId
 });
 
 export const signUp = (name, email, password) => {
@@ -181,6 +187,29 @@ export const postStory = (name, content, imageurl) => {
       dispatch(appDoneLoading());
     } catch (e) {
       console.log("danger", e.response.data);
+      dispatch(showMessageWithTimeout("danger", false, e.response.data, 3000));
+      dispatch(appDoneLoading());
+    }
+  };
+};
+
+export const deleteStory = storyId => {
+  return async (dispatch, getState) => {
+    dispatch(appLoading());
+    try {
+      const { homepage, token } = selectUser(getState());
+      const response = await axios.delete(
+        `${apiUrl}/homepages/${homepage.id}/stories/${storyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("story deleted?", response.data);
+      dispatch(storyDeleteSuccess(storyId));
+      dispatch(appDoneLoading());
+    } catch (e) {
       dispatch(showMessageWithTimeout("danger", false, e.response.data, 3000));
       dispatch(appDoneLoading());
     }
