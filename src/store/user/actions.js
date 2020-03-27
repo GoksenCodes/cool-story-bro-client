@@ -15,6 +15,7 @@ export const HOMEPAGE_UPDATED = "HOMEPAGE_UPDATED";
 export const LOG_OUT = "LOG_OUT";
 export const STORY_POST_SUCCESS = "STORY_POST_SUCCESS";
 export const STORY_DELETE_SUCCESS = "STORY_DELETE_SUCCESS";
+export const LIKE_STORY_SUCCESS = "LIKE_STORY_SUCCESS";
 
 const loginSuccess = userWithToken => {
   return {
@@ -43,6 +44,11 @@ export const storyPostSuccess = story => ({
 export const storyDeleteSuccess = storyId => ({
   type: STORY_DELETE_SUCCESS,
   payload: storyId
+});
+
+export const likeStorySuccess = likedUser => ({
+  type: LIKE_STORY_SUCCESS,
+  payload: likedUser
 });
 
 export const signUp = (name, email, password) => {
@@ -208,6 +214,33 @@ export const deleteStory = storyId => {
       );
       console.log("story deleted?", response.data);
       dispatch(storyDeleteSuccess(storyId));
+      dispatch(appDoneLoading());
+    } catch (e) {
+      dispatch(showMessageWithTimeout("danger", false, e.response.data, 3000));
+      dispatch(appDoneLoading());
+    }
+  };
+};
+
+export const likeStory = storyId => {
+  return async (dispatch, getState) => {
+    dispatch(appLoading());
+    // we need token to check if the user logged in
+    const { homepage, token } = selectUser(getState());
+
+    try {
+      const response = await axios.post(
+        //post request returns the response that the database generates
+        `${apiUrl}/homepages/${homepage.id}/stories/${storyId}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("liked?", response);
+      dispatch(likeStorySuccess(response.data));
       dispatch(appDoneLoading());
     } catch (e) {
       dispatch(showMessageWithTimeout("danger", false, e.response.data, 3000));
